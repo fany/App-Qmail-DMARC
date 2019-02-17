@@ -1,0 +1,100 @@
+#!/usr/bin/perl -d:Trace
+
+BEGIN { open STDERR, '>', '/tmp/STDERR' }
+
+use 5.014;
+use warnings;
+
+use Mail::Qmail::Queue::Message::Extended;
+
+# workaround for https://github.com/toddr/Crypt-OpenSSL-RSA/pull/25:
+use Crypt::OpenSSL::RSA;
+
+my @debug;
+
+sub debug {
+    push @debug, join ': ', @_;
+}
+
+sub domain {
+    shift =~ s/.*\@//r;
+}
+
+my $message = Mail::Qmail::Queue::Message::Extended->receive
+  or die "Invalid message\n";
+
+$SIG{__DIE__} = sub {
+    debug died => "@_";
+    die @_;
+};
+
+debug from => $message->from;
+debug to => join ', ', $message->to;
+
+if ( exists $ENV{RELAYCLIENT} ) {
+    debug RELAYCLIENT => "$ENV{TCPREMOTEHOST} [$ENV{TCPREMOTEIP}";
+}
+else {
+
+    require Mail::DKIM::Verifier;
+    my $dkim = Mail::DKIM::Verifier->new;
+    $dkim->PRINT( $message->body =~ s/\cM?\cJ/\cM\cJ/gr );
+    $dkim->CLOSE;
+    debug 'DKIM result' => $dkim->result;
+
+    if ( $dkim->result ne 'pass' ) {
+
+        require Mail::SPF::Query;
+        my $header_from = $message->header_from;
+        my $spf         = Mail::SPF::Query->new(
+            ip     => $ENV{TCPREMOTEIP},
+            helo   => $message->helo,
+            sender => $header_from->address,
+        );
+        my ( $spf_result, $smtp_comment, $header_comment, $spf_record, $detail )
+          = $spf->result;
+        $message->add_header("Received-SPF: $spf_result ($header_comment)");
+        debug 'SPF result' => "$spf_result ($header_comment)";
+
+        require Mail::DMARC::PurePerl;
+        my $dmarc_text = (
+            my $dmarc_result = Mail::DMARC::PurePerl->new(
+                source_ip     => $ENV{TCPREMOTEIP},
+                envelope_to   => domain( ( $message->to )[0] ),
+                envelope_from => domain( $message->from ),
+                header_from   => $header_from && $header_from->host,
+                dkim          => $dkim,
+                spf           => {
+                    domain => $header_from->host,
+                    scope  => 'mfrom',
+                    result => $spf_result,
+                },
+            )->validate
+        )->result;
+        debug 'DMARC result' => $dmarc_text;
+
+        if ( $dmarc_result->result ne 'pass' ) {
+            my $disposition = $dmarc_result->disposition;
+            debug 'DMARC disposition' => $disposition;
+            if ( $disposition eq 'reject' ) {
+                my $feedback_fh = IO::Handle->new_from_fd( 4, 'w' );
+                $feedback_fh->say('DFailed DMARC test.');
+                debug action => 'reject';
+                exit 88;
+            }
+            elsif ( $disposition eq 'quarantine' ) {
+                $message->add_header("MinD-DMARC-Status: $dmarc_text");
+            }
+        }
+    }
+}
+
+delete $ENV{QMAILQUEUE};    # use original qmail-queue
+$message->send == 0 or die "Error sending message: exit status $?\n";
+debug action => 'queue';
+
+END {
+    if ( open my $log, '>>', '/var/log/qmail/qmail-dmarc/dmarc.log' ) {
+        say $log localtime . ' ' . join '; ', @debug;
+    }
+}
