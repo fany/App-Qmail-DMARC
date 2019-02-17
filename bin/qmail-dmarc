@@ -1,9 +1,17 @@
-#!/usr/bin/perl -d:Trace
-
-BEGIN { open STDERR, '>', '/tmp/STDERR' }
+#!perl
 
 use 5.014;
 use warnings;
+
+use IO::Handle;
+
+my $feedback_fh;
+
+BEGIN {
+    # Open ASAP before the handle gets reused:
+    $feedback_fh = IO::Handle->new_from_fd( 4, 'w' )
+      or warn "Cannot open feedback handle: $!";
+}
 
 use Mail::DKIM::Verifier;
 use Mail::DMARC::PurePerl;
@@ -18,6 +26,12 @@ sub debug {
 
 sub domain {
     shift =~ s/.*\@//r;
+}
+
+sub reject {
+    $feedback_fh->say("D@_");
+    debug action => 'reject';
+    exit 88 if $ENV{DMARC_REJECT};
 }
 
 my $message = Mail::Qmail::Queue::Message::Extended->receive
@@ -44,7 +58,19 @@ else {
     if ( $dkim->result ne 'pass' ) {
 
         my $header_from = $message->header_from;
-        my $spf         = Mail::SPF::Query->new(
+        my $header_from_domain = $header_from->host if $header_from;
+
+        if ($header_from_domain) {
+            open my $rcpthosts, '<', '/var/qmail/control/rcpthosts';
+            while (<$rcpthosts>) {
+                chomp;
+                reject 'valid DKIM signature required for sender domain '
+                  . $header_from_domain
+                  if lc eq lc $header_from_domain;
+            }
+        }
+
+        my $spf = Mail::SPF::Query->new(
             ip     => $ENV{TCPREMOTEIP},
             helo   => $message->helo,
             sender => $header_from->address,
@@ -59,10 +85,10 @@ else {
                 source_ip     => $ENV{TCPREMOTEIP},
                 envelope_to   => domain( ( $message->to )[0] ),
                 envelope_from => domain( $message->from ),
-                header_from   => $header_from && $header_from->host,
+                header_from   => $header_from_domain,
                 dkim          => $dkim,
                 spf           => {
-                    domain => $header_from->host,
+                    domain => $header_from_domain,
                     scope  => 'mfrom',
                     result => $spf_result,
                 },
@@ -73,15 +99,8 @@ else {
         if ( $dmarc_result->result ne 'pass' ) {
             my $disposition = $dmarc_result->disposition;
             debug 'DMARC disposition' => $disposition;
-            if ( $disposition eq 'reject' ) {
-                my $feedback_fh = IO::Handle->new_from_fd( 4, 'w' );
-                $feedback_fh->say('DFailed DMARC test.');
-                debug action => 'reject';
-                exit 88;
-            }
-            elsif ( $disposition eq 'quarantine' ) {
-                $message->add_header("MinD-DMARC-Status: $dmarc_text");
-            }
+            reject 'Failed DMARC test.' if $disposition eq 'reject';
+            $message->add_header("MinD-DMARC-Status: $dmarc_text");
         }
     }
 }
@@ -91,6 +110,7 @@ $message->send == 0 or die "Error sending message: exit status $?\n";
 debug action => 'queue';
 
 END {
+    debug 'exit code' => $?;
     if ( open my $log, '>>', '/var/log/qmail/qmail-dmarc/dmarc.log' ) {
         say $log localtime . ' ' . join '; ', @debug;
     }
