@@ -13,6 +13,7 @@ BEGIN {
       or warn "Cannot open feedback handle: $!";
 }
 
+use FindBin ();
 use Mail::DKIM::Verifier;
 use Mail::DMARC::PurePerl;
 use Mail::Qmail::Queue::Message::Extended;
@@ -126,7 +127,5 @@ debug action => 'queue';
 
 END {
     debug 'exit code' => $?;
-    if ( open my $log, '>>', '/var/log/qmail/qmail-dmarc/dmarc.log' ) {
-        say $log localtime . ' ' . join '; ', @debug;
-    }
+    say STDERR "$FindBin::Script\[$$]: " . join '; ', @debug;
 }
