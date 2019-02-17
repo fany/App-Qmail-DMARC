@@ -28,6 +28,12 @@ sub domain {
     shift =~ s/.*\@//r;
 }
 
+sub if_defined {
+    my ( $key, $value ) = @_;
+    return unless defined $value;
+    $key => $value;
+}
+
 sub reject {
     $feedback_fh->say("D@_");
     debug action => 'reject';
@@ -37,16 +43,21 @@ sub reject {
 my $message = Mail::Qmail::Queue::Message::Extended->receive
   or die "Invalid message\n";
 
+if ( open my $fh, '>', "/tmp/qmail-dmarc.$$" ) {
+    print $fh $message->body;
+}
+
 $SIG{__DIE__} = sub {
     debug died => "@_";
     die @_;
 };
 
-debug from => $message->from;
+my $envelope_from = $message->from;
+debug from => $envelope_from;
 debug to => join ', ', $message->to;
 
 if ( exists $ENV{RELAYCLIENT} ) {
-    debug RELAYCLIENT => "$ENV{TCPREMOTEHOST} [$ENV{TCPREMOTEIP}";
+    debug RELAYCLIENT => "$ENV{TCPREMOTEHOST} [$ENV{TCPREMOTEIP}]";
 }
 else {
 
@@ -70,10 +81,12 @@ else {
             }
         }
 
+        my $helo = $message->helo;
+        debug helo => $helo;
         my $spf = Mail::SPF::Query->new(
-            ip     => $ENV{TCPREMOTEIP},
-            helo   => $message->helo,
-            sender => $header_from->address,
+            ip   => $ENV{TCPREMOTEIP},
+            helo => $helo,
+            $header_from ? ( sender => scalar $header_from->address ) : (),
         );
         my ( $spf_result, $smtp_comment, $header_comment, $spf_record, $detail )
           = $spf->result;
@@ -82,13 +95,15 @@ else {
 
         my $dmarc_text = (
             my $dmarc_result = Mail::DMARC::PurePerl->new(
-                source_ip     => $ENV{TCPREMOTEIP},
-                envelope_to   => domain( ( $message->to )[0] ),
-                envelope_from => domain( $message->from ),
-                header_from   => $header_from_domain,
-                dkim          => $dkim,
-                spf           => {
-                    domain => $header_from_domain,
+                source_ip   => $ENV{TCPREMOTEIP},
+                envelope_to => domain( ( $message->to )[0] ),
+                if_defined( envelope_from => domain($envelope_from) ),
+                if_defined( header_from   => $header_from_domain ),
+                dkim => $dkim,
+                spf  => {
+                    if_defined(
+                        domain => $header_from_domain
+                    ),
                     scope  => 'mfrom',
                     result => $spf_result,
                 },

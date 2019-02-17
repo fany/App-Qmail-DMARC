@@ -25,7 +25,9 @@ sub header_from {
 sub helo {
     my $header = shift->header;
     my $received = $header->get('Received') or return;
-    $received =~ /^from .*? \(HELO (.*?)\) / or return;
+    $received =~ /^from .*? \(HELO (.*?)\) /
+      or $received =~ /^from (\S+) \(/
+      or return;
     $1;
 }
 
