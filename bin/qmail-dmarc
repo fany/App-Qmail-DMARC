@@ -5,10 +5,10 @@ BEGIN { open STDERR, '>', '/tmp/STDERR' }
 use 5.014;
 use warnings;
 
+use Mail::DKIM::Verifier;
+use Mail::DMARC::PurePerl;
 use Mail::Qmail::Queue::Message::Extended;
-
-# workaround for https://github.com/toddr/Crypt-OpenSSL-RSA/pull/25:
-use Crypt::OpenSSL::RSA;
+use Mail::SPF::Query;
 
 my @debug;
 
@@ -36,7 +36,6 @@ if ( exists $ENV{RELAYCLIENT} ) {
 }
 else {
 
-    require Mail::DKIM::Verifier;
     my $dkim = Mail::DKIM::Verifier->new;
     $dkim->PRINT( $message->body =~ s/\cM?\cJ/\cM\cJ/gr );
     $dkim->CLOSE;
@@ -44,7 +43,6 @@ else {
 
     if ( $dkim->result ne 'pass' ) {
 
-        require Mail::SPF::Query;
         my $header_from = $message->header_from;
         my $spf         = Mail::SPF::Query->new(
             ip     => $ENV{TCPREMOTEIP},
@@ -56,7 +54,6 @@ else {
         $message->add_header("Received-SPF: $spf_result ($header_comment)");
         debug 'SPF result' => "$spf_result ($header_comment)";
 
-        require Mail::DMARC::PurePerl;
         my $dmarc_text = (
             my $dmarc_result = Mail::DMARC::PurePerl->new(
                 source_ip     => $ENV{TCPREMOTEIP},
