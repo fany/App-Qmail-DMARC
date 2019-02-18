@@ -44,10 +44,6 @@ sub reject {
 my $message = Mail::Qmail::Queue::Message::Extended->receive
   or die "Invalid message\n";
 
-if ( open my $fh, '>', "/tmp/qmail-dmarc.$$" ) {
-    print $fh $message->body;
-}
-
 $SIG{__DIE__} = sub {
     debug died => "@_";
     die @_;
