@@ -50,7 +50,7 @@ $SIG{__DIE__} = sub {
 };
 
 my $envelope_from = $message->from;
-debug from => $envelope_from;
+debug 'RFC5321.MailFrom' => $envelope_from;
 debug to => join ', ', $message->to;
 
 if ( exists $ENV{RELAYCLIENT} ) {
@@ -66,9 +66,10 @@ else {
     if ( $dkim->result ne 'pass' ) {
 
         my $header_from = $message->header_from;
-        my $header_from_domain = $header_from->host if $header_from;
-
-        if ($header_from_domain) {
+        my $header_from_domain;
+        if ($header_from) {
+            $header_from_domain = $header_from->host;
+            debug 'RFC5322.From' => $header_from->address;
             open my $rcpthosts, '<', '/var/qmail/control/rcpthosts';
             while (<$rcpthosts>) {
                 chomp;
