@@ -7,7 +7,7 @@ use Test::More;
 plan tests => 1;
 
 BEGIN {
-    use_ok( 'Mail::Qmail::DMARC' ) || print "Bail out!\n";
+    use_ok( 'MailX::Qmail::Queue::Message' ) || print "Bail out!\n";
 }
 
-diag( "Testing Mail::Qmail::DMARC $Mail::Qmail::DMARC::VERSION, Perl $], $^X" );
+diag( "Testing MailX::Qmail::Queue::Message $MailX::Qmail::Queue::Message::VERSION, Perl $], $^X" );

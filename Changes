@@ -1,5 +1,4 @@
-Revision history for Mail-Qmail-DMARC
+Revision history for App-Qmail-DMARC
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
-
+0.42    2019-03-19 00:07
+        prepared first release for CPAN

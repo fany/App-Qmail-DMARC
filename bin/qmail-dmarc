@@ -16,7 +16,7 @@ BEGIN {
 use FindBin ();
 use Mail::DKIM::Verifier;
 use Mail::DMARC::PurePerl;
-use Mail::Qmail::DMARC::Queue::Message;
+use MailX::Qmail::Queue::Message;
 use Mail::SPF::Query;
 
 my @debug;
@@ -41,7 +41,7 @@ sub reject {
     exit 88 if $ENV{DMARC_REJECT};
 }
 
-my $message = Mail::Qmail::DMARC::Queue::Message->receive
+my $message = MailX::Qmail::Queue::Message->receive
   or die "Invalid message\n";
 
 $SIG{__DIE__} = sub {
@@ -189,8 +189,8 @@ If you need it to operate in any other way, please let me know.
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-mail-qmail-dmarc at rt.cpan.org>, or through the web interface at
-L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=Mail-Qmail-DMARC>.
+C<bug-app-qmail-dmarc at rt.cpan.org>, or through the web interface at
+L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-Qmail-DMARC>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
@@ -198,7 +198,7 @@ your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Mail::Qmail::DMARC
+    perldoc App::Qmail::DMARC
 
 You can also look for information at:
 
@@ -206,19 +206,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=Mail-Qmail::DMARC>
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=App-Qmail-DMARC>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Mail-Qmail-DMARC>
+L<http://annocpan.org/dist/App-Qmail-DMARC>
 
 =item * CPAN Ratings
 
-L<https://cpanratings.perl.org/d/Mail-Qmail-DMARC>
+L<https://cpanratings.perl.org/d/App-Qmail-DMARC>
 
 =item * Search CPAN
 
-L<https://metacpan.org/release/Mail-Qmail-DMARC>
+L<https://metacpan.org/release/App-Qmail-DMARC>
 
 =back
 

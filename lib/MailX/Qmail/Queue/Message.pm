@@ -1,9 +1,9 @@
 use 5.014;
 use warnings;
 
-our $VERSION = '0.11';
+package MailX::Qmail::Queue::Message;
 
-package Mail::Qmail::DMARC::Queue::Message;
+our $VERSION = '0.11';
 
 use base 'Mail::Qmail::Queue::Message';
 
@@ -51,7 +51,7 @@ __END__
 
 =head1 NAME
 
-Mail::Qmail::DMARC::Queue::Message - extensions to Mail::Qmail::Queue::Message
+MailX::Qmail::Queue::Message - extensions to Mail::Qmail::Queue::Message
 
 =head1 DESCRIPTION
 
@@ -85,8 +85,8 @@ Expects C<Field: Value> as argument, without newlines at the end.
 =head1 BUGS
 
 Please report any bugs or feature requests to
-C<bug-mail-qmail-dmarc at rt.cpan.org>, or through the web interface at
-L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=Mail-Qmail-DMARC>.
+C<bug-app-qmail-dmarc at rt.cpan.org>, or through the web interface at
+L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-Qmail-DMARC>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
@@ -94,7 +94,7 @@ your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Mail::Qmail::DMARC
+    perldoc App::Qmail::DMARC
 
 You can also look for information at:
 
@@ -102,19 +102,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=Mail-Qmail::DMARC>
+L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=App-Qmail-DMARC>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Mail-Qmail-DMARC>
+L<http://annocpan.org/dist/App-Qmail-DMARC>
 
 =item * CPAN Ratings
 
-L<https://cpanratings.perl.org/d/Mail-Qmail-DMARC>
+L<https://cpanratings.perl.org/d/App-Qmail-DMARC>
 
 =item * Search CPAN
 
-L<https://metacpan.org/release/Mail-Qmail-DMARC>
+L<https://metacpan.org/release/App-Qmail-DMARC>
 
 =back
 

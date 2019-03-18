@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME               => 'Mail::Qmail::DMARC',
     AUTHOR             => q{Martin H. Sluka <fany@cpan.org>},
-    VERSION_FROM       => 'lib/Mail/Qmail/DMARC/Queue/Message.pm',
+    VERSION            => 0.42,
     LICENSE            => 'artistic_2',
     EXE_FILES          => ['bin/qmail-dmarc'],
     PL_FILES           => {},
@@ -25,17 +25,17 @@ WriteMakefile(
         'Mail::SPF::Query'            => 0,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean => { FILES    => 'Mail-Qmail-DMARC-*' },
+    clean => { FILES    => 'App-Qmail-DMARC-*' },
 
     PERM_DIR => '755',
 
     META_MERGE => {
         resources => {
-            homepage   => 'https://github.com/fany/Mail-Qmail-DMARC',
+            homepage   => 'https://github.com/fany/App-Qmail-DMARC',
             repository => {
                 type => 'git',
-                url  => 'https://github.com/fany/Mail-Qmail-DMARC.git',
-                web  => 'https://github.com/fany/Mail-Qmail-DMARC',
+                url  => 'https://github.com/fany/App-Qmail-DMARC.git',
+                web  => 'https://github.com/fany/App-Qmail-DMARC',
             },
         },
     },

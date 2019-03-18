@@ -1,4 +1,4 @@
-Mail-Qmail-DMARC
+App-Qmail-DMARC
 
 This distribution mainly provides the tool qmail-dmarc which should
 be called by qmail-smtpd to check if an incoming mail is aligned
@@ -22,21 +22,21 @@ SUPPORT AND DOCUMENTATION
 After installing, you can find documentation for this module with the
 perldoc command.
 
-    perldoc Mail::Qmail::DMARC
+    perldoc App::Qmail::DMARC
 
 You can also look for information at:
 
     RT, CPAN's request tracker (report bugs here)
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Mail-Qmail-DMARC
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=App-Qmail-DMARC
 
     AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Mail-Qmail-DMARC
+        http://annocpan.org/dist/App-Qmail-DMARC
 
     CPAN Ratings
-        http://cpanratings.perl.org/d/Mail-Qmail-DMARC
+        http://cpanratings.perl.org/d/App-Qmail-DMARC
 
     Search CPAN
-        http://search.cpan.org/dist/Mail-Qmail-DMARC/
+        http://search.cpan.org/dist/App-Qmail-DMARC/
 
 
 LICENSE AND COPYRIGHT

@@ -7,8 +7,8 @@ cover_db/
 inc/
 .last_cover_stats
 .lwpcookies
-Mail-Qmail-DMARC-*
-Mail-Qmail-DMARC-*.tar.gz
+App-Qmail-DMARC-*
+App-Qmail-DMARC-*.tar.gz
 Makefile
 Makefile.old
 MANIFEST.bak
