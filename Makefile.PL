@@ -3,9 +3,9 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    NAME               => 'Mail::Qmail::DMARC',
+    NAME               => 'App::Qmail::DMARC',
     AUTHOR             => q{Martin H. Sluka <fany@cpan.org>},
-    VERSION            => 0.42,
+    VERSION_FROM       => 'lib/App/Qmail/DMARC.pm',
     LICENSE            => 'artistic_2',
     EXE_FILES          => ['bin/qmail-dmarc'],
     PL_FILES           => {},
