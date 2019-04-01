@@ -70,13 +70,6 @@ else {
         if ($header_from) {
             $header_from_domain = $header_from->host;
             debug 'RFC5322.From' => $header_from->address;
-            open my $rcpthosts, '<', '/var/qmail/control/rcpthosts';
-            while (<$rcpthosts>) {
-                chomp;
-                reject 'Valid DKIM signature required for sender domain '
-                  . $header_from_domain
-                  if lc eq lc $header_from_domain;
-            }
         }
 
         my $helo = $message->helo;
@@ -152,13 +145,6 @@ If this is the case, the e-mail is passed to C<qmail-queue>.
 
 =item 3.
 
-If not, but the message has a C<From:> domain contained in
-C</var/qmail/control/rcpthosts> and the environment variable C<DMARC_REJECT>
-is set to a true value, the message is rejected with message
-C<554 Valid DKIM signature required for sender domain ...>
-
-=item 4.
-
 If not, a SPF check is done, and a C<Received-SPF:> header field is added to
 the message.
 Then we check if the message is aligned with its sender's DMARC policy.
@@ -168,7 +154,7 @@ If the message does not align to the policy, the policy advises to reject such
 messages and when the environment variable C<DMARC_REJECT> is set to a true
 value, the message will be rejected with C<554 Failed DMARC test.>
 
-=item 5.
+=item 4.
 
 In any other case the message is passed on to C<qmail-queue>.
 

@@ -1,5 +1,8 @@
 Revision history for App-Qmail-DMARC
 
+0.50    2019-04-02 00:53
+        Do no longer enforce special rules for local domains.
+
 0.43    2019-03-29 03:49
         Do not pass empty RFC5321.MailFrom to Mail::DMARC::PurePerl,
         because it does not like that.
