@@ -1,5 +1,8 @@
 Revision history for App-Qmail-DMARC
 
+0.51    2019-06-30 18:08
+        Do not end feedback message to qmail with newline.
+
 0.50    2019-04-02 00:53
         Do no longer enforce special rules for local domains.
 

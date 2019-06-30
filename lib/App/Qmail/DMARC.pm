@@ -1,6 +1,6 @@
 package App::Qmail::DMARC;
 
-our $VERSION = '0.5';
+our $VERSION = '0.51';
 
 __END__
 

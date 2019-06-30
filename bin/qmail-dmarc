@@ -36,7 +36,7 @@ sub if_set {
 }
 
 sub reject {
-    $feedback_fh->say("D@_");
+    $feedback_fh->print("D@_");
     debug action => 'reject';
     exit 88 if $ENV{DMARC_REJECT};
 }
