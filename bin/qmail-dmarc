@@ -60,7 +60,12 @@ else {
 
     my $dkim = Mail::DKIM::Verifier->new;
     $dkim->PRINT( $message->body =~ s/\cM?\cJ/\cM\cJ/gr );
-    $dkim->CLOSE;
+    {
+        # Workaround for <https://rt.cpan.org/Ticket/Display.html?id=130928>:
+        local $SIG{__DIE__};
+
+        $dkim->CLOSE;
+    }
     debug 'DKIM result' => $dkim->result;
 
     if ( $dkim->result ne 'pass' ) {
