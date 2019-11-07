@@ -32,11 +32,7 @@ WriteMakefile(
     META_MERGE => {
         resources => {
             homepage   => 'https://github.com/fany/App-Qmail-DMARC',
-            repository => {
-                type => 'git',
-                url  => 'https://github.com/fany/App-Qmail-DMARC.git',
-                web  => 'https://github.com/fany/App-Qmail-DMARC',
-            },
+            repository => 'https://github.com/fany/App-Qmail-DMARC.git',
         },
     },
 );
