@@ -1,5 +1,9 @@
 Revision history for App-Qmail-DMARC
 
+0.60    2019-11-09 14:57
+        Switched to Mail::SPF due to issues with non-standard result
+        codes (like "unknown") returned by Mail::SPF::Query
+
 0.51    2019-06-30 18:08
         Do not end feedback message to qmail with newline.
 
