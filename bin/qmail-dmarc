@@ -3,7 +3,7 @@
 use 5.014;
 use warnings;
 
-our $VERSION = '0.6';
+our $VERSION = '0.61';
 
 use IO::Handle;
 
@@ -43,11 +43,6 @@ sub reject {
 }
 
 sub spf_query {
-
-    # Workaround for <https://rt.cpan.org/Ticket/Display.html?id=130949>,
-    # <https://rt.cpan.org/Ticket/Display.html?id=130950> et probably al.:
-    local $SIG{__DIE__};
-
     require Mail::SPF;
     my $request = Mail::SPF::Request->new(@_);
     state $server = Mail::SPF::Server->new;
@@ -58,7 +53,7 @@ my $message = MailX::Qmail::Queue::Message->receive
   or die "Invalid message\n";
 
 $SIG{__DIE__} = sub {
-    debug died => "@_";
+    debug died => "@_" unless $^S;
     die @_;
 };
 
@@ -73,12 +68,7 @@ else {
 
     my $dkim = Mail::DKIM::Verifier->new;
     $dkim->PRINT( $message->body =~ s/\cM?\cJ/\cM\cJ/gr );
-    {
-        # Workaround for <https://rt.cpan.org/Ticket/Display.html?id=130928>:
-        local $SIG{__DIE__};
-
-        $dkim->CLOSE;
-    }
+    $dkim->CLOSE;
     debug 'DKIM result' => $dkim->result;
 
     if ( $dkim->result ne 'pass' ) {

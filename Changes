@@ -1,5 +1,9 @@
 Revision history for App-Qmail-DMARC
 
+0.61    2019-11-09 20:50
+        Better solution for not adding debug messages during
+        exceptions which occured in an eval
+
 0.60    2019-11-09 14:57
         Switched to Mail::SPF due to issues with non-standard result
         codes (like "unknown") returned by Mail::SPF::Query
