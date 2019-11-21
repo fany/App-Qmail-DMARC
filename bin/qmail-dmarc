@@ -3,7 +3,7 @@
 use 5.014;
 use warnings;
 
-our $VERSION = '0.61';
+our $VERSION = '0.7';
 
 use IO::Handle;
 
@@ -89,6 +89,9 @@ else {
         }
         else {
             $spf_query{scope} = 'helo';
+
+            # identity required by Mail::SPF:
+            $spf_query{identity} = $spf_query{helo_identity};
         }
 
         my $spf_result = spf_query(%spf_query);

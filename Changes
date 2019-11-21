@@ -1,5 +1,8 @@
 Revision history for App-Qmail-DMARC
 
+0.7     2019-11-21 04:35
+        fixed handling of mails which have no From header line
+
 0.61    2019-11-09 20:50
         Better solution for not adding debug messages during
         exceptions which occured in an eval
