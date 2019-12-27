@@ -1,6 +1,6 @@
 package App::Qmail::DMARC;
 
-our $VERSION = '0.7';
+our $VERSION = '0.8';
 
 __END__
 
@@ -9,6 +9,10 @@ __END__
 qmail-dmarc - verify using DMARC and queue a mail message for delivery
 
 =head1 DESCRIPTION
+
+B<This module has been superseded by L<Mail::Qmail::Filter>,
+especially Mail::Qmail::Filter::DMARC.
+It will eventually be removed from CPAN.>
 
 qmail-dmarc is designed to be called by qmail-smtpd instead of qmail-queue
 and will verify if incoming e-mail conforms to the DMARC policy of its
@@ -61,47 +65,13 @@ C<DMARC_REJECT>, none.
 It just works the way I need it.
 If you need it to operate in any other way, please let me know.
 
-=head1 BUGS
+=head1 SEE ALSO
 
-Please report any bugs or feature requests to
-C<bug-app-qmail-dmarc at rt.cpan.org>, or through the web interface at
-L<https://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-Qmail-DMARC>.
-I will be notified, and then you'll automatically be notified of progress on
-your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc App::Qmail::DMARC
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker (report bugs here)
-
-L<https://rt.cpan.org/NoAuth/Bugs.html?Dist=App-Qmail-DMARC>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/App-Qmail-DMARC>
-
-=item * CPAN Ratings
-
-L<https://cpanratings.perl.org/d/App-Qmail-DMARC>
-
-=item * Search CPAN
-
-L<https://metacpan.org/release/App-Qmail-DMARC>
-
-=back
-
-=head1 ACKNOWLEDGEMENTS
+L<Mail::Qmail::Filter>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2019 Martin H. Sluka.
+Copyright 2019 Martin Sluka.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the the Artistic License (2.0). You may obtain a
